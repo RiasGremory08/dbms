@@ -1,0 +1,11 @@
+//Buat Trigger untuk melihat perubahan pada saat insert/input data//
+-> create trigger insert_nasabah  after insert on nasabah for each row insert into log_nasabah values ('tambah data', now());
+
+//Buat trigger untuk melihat peerubahan saldo//
+-> create trigger before_saldo_update before update on transaksi for each row insert  into log_saldo_transaksi 
+set no_trans = old.no_trans, saldo_akhir = new.nominal, saldo_awal = old.nominal, waktu_perubahan = now();
+
+//Buat trigger yang dapat melakukan perubahan saat terjadi peminjaman dan
+pengembalian untuk perubahan stok buku di tabel bukuxxxx//
+-> create trigger update_peminjaman after insert on peminjaman for each row begin update buku0037 set stok_buku = stok_buku - new.jumlah pinjam
+where kode_buku = new_kode_buku; end;
