@@ -1,1 +1,94 @@
+<--- Percabangan --->
+
+//Tampilkan no rekening, nama nasabah, tanggal, total nominal dan hadiah
+Keterangan jika total nominal lebih dari sama dengan 5.000.000 mendapat payung, kurang dari
+5.000.000 tidak mendapat hadiah//
+-> select na.no_rekening, na.nama_nasabah, tr.tanggal, SUM(nominal), IF(SUM(nominal) >= 5000000, "Mendapat Payung","Tidak Mendapat Hadiah") as "Hadiah"
+from nasabah na, transaksi tr
+where na.no_rekening=tr.no_rekening
+group by na.no_rekening
+
+//Tampilkan no rekening, nama nasabah, jenis transaksi, tanggal, total nominal, hadiah
+Keterangan jika total nominal &gt;= 10.000.000 maka mendapat jam dinding, jika total nominal &gt;=
+5.000.000 maka mendapat kaos, jika &lt; 5.000.000 maka tidak mendapat hadiah. Dengan ketentuan
+yang total nominal &gt; 1.000.000 yang ditampilkan//
+-> select na.no_rekening, na.nama_nasabah, jt.jenis_transaksi, tr.tanggal,sum(nominal) as "Total Tabungan", if(sum(nominal) >= 10000000, "Mendapat jam dinding", 
+if(sum(nominal) >= 5000000, "Mendapat Kaos","Tidak Mendapat Hadiah")) as "Hadiah"
+from nasabah na, jenis_transaksi tr, transaksi tr
+where na.no_rekening=tr.no_rekening=  AND jt.kode_jenis = tr.kode_jenis
+group by na.no_rekening
+having sum(tr.nominal) >= 2500000
+
+//Tampilkan nama nasabah, kelurahan, kode kelurahan, dan alamat
+Keterangan jika kelurahan = “Medono” maka kodenya “M”, jika kelurahan = “Podosugih” maka
+kodenya “P”, dan jika kelurahan = “Kauman” maka kodenya “M”//
+-> select nama_nasabah, kelurahan, 
+case kelurahan
+when "Medono" then "M"
+when "Podosugih" then "P"
+else "K" END as "Kode Kelurahan",
+alamat
+from nasabah
+
+//Tampilkan no rekening, nama nasabah, tanggal, nominal, ketentuan nominal
+Keterangan jika nominal &gt;= 5000000 maka banyak, jika nominal &gt;= 2500000 dan nominal &lt;=
+4500000 maka sedang, dan jika nominal dibawah 2500000 maka sedikit//
+-> select na.no_rekening, na.nama_nasabah, tr.tanggal, nominal,
+case 
+when nominal >= 5000000 then "banyak",
+when nominal >= 2500000 and nominal >= 4500000 then "sedang"
+else "sedikit" END as "ketentuan nominal"
+from nasabah na,  transaksi tr
+where na.no_rekening = tr.no_rekening
+
+
+//Tampilkan no rekening, nama nasabah, tanggal, total nominal dan hadiah
+Keterangan jika total nominal &gt;= 5000000 maka mendapat payusng, dan jika dibawah 5000000
+maka tidak mendapatkan hadiah//
+-> select na.no_rekening, na.nama_nasabah, tr.tanggal. sum(tr.nominal) as "total nominal",
+case
+when (sum(tr.nominal) >= 5000000) then "mendapat payung"
+else "tidak mendapat hadiah"
+end as "hadiah"
+from nasabah na, transaksi tr
+where na.no_rekening = tr.no_rekening
+group by na.no_rekening
+
+
+//Tampilkan no rekening, nama nasabah, tanggal, total nominal dan hadiah
+Keterangan jika total nominal &gt;= 10000000 maka mendapat jam dinding, jika total nominal &gt;=
+5000000 maka mendapat kaos, dan jika dibawah 5000000 maka tidak mendapatkan hadiah//
+-> select na.no_rekening, na.nama_nasabah, tr.tanggal, sum(tr.nominal) as "total nominal",
+case 
+when (sum(tr.nominal) >= 10000000) then "mendapat jam dinding"
+when (sum(tr.nominal) >= 5000000) then "mendapat kaos"
+else "tidak mendapat hadiah"
+end as "hadiah"
+from nasabah na, transaksi tr
+where na.no_rekening=tr.no_rekening
+group by na.no_rekening
+having sum(tr,nominal) >= 2500000
+
+
+
+---FORMATIF---
+
+//(view_c) tampilkan nis, nama, tgl_bayar, tgl dari tgl_bayar, keterangan
+Jika tgl dari tgl bayar&lt;=10 maka ket=tepat waktu
+Jika tgl dari tgl bayar&gt;10 maka ket=terlambat//
+-> create view view_c as select sw.nis, sw.nama, pb.tgl_bayar,  day(pb.tgl_bayar) as "tgl dari tgl bayar",
+if (day(pb.tgl_bayar) <= 10 , "tepat waktu", "terlambat")
+ as "keterangan"
+from siswa sw, pembayaran pb
+where sw.nis= pb.nis
+
+//(view_d) tampilkan nis, nama, jumlah transaksi tiap nis, keterangan
+Jika jml transaksi=1 maka ket=ringan
+Jika jml transaksi=2 maka ket=sedang
+Jika jml transaksi=3 maka ket=berat//
+-> create view view_d  as select pb.nis, sw.nama, count(pb.nis) as "jumlah transaksi tiap nis", 
+if (count(pb.nis) = 1, "ringan", if (count(pb.nis) = 2, "sedang", "berat")) as "keterangan"
+from siswa sw, pembayaran pb
+where sw.nis= pb.nis
+
 
