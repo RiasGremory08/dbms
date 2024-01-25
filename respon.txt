@@ -1,0 +1,11 @@
+//Buatlah trigger yang dapat melakukan perubahan stok mobil saat terjadi penyewaan//
+-> create trigger kurang_stok after insert on sewa0037 for each row begin update mobil0037 mobil0037 
+set stok = stok - new.jumlah_sewa where kode_mobil = new.kode_mobil; end;
+
+//Buat trigger untuk menangkap kejadian perubahan stok lama dan stok baru yg
+terjadi pada tabel mobilxxxx yang dicatat di tabel log_mobil//
+-> create trigger  log_perubahan_stok after update on mobil0037 for each row begin 
+insert into log_mobil (kode_mobil, stok_lama, stok_baru, waktu_perubahan) values (new.kode_mobil, old.stok, new.stok, now()); END;
+
+//Buat trigger yg dapat merubah status keterangan menjadi ‘ready’saat terjadi pengembalian
+-> create trigger update_keterangan after insert on trans_kembali0037 for each row begin update mobil set keterangan = 'ready' where kode_mobil = new.kode_mobil; end;
